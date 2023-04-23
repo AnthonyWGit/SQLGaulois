@@ -143,3 +143,10 @@ WHERE id_ingredient IN (SELECT * FROM (
 SELECT ingredient.id_ingredient  FROM composer INNER JOIN potion ON composer.id_potion = potion.id_potion
 INNER JOIN ingredient ON composer.id_ingredient = ingredient.id_ingredient
 WHERE ingredient.nom_ingredient = "Persil" AND potion.nom_potion = "Soupe" ) c ) 
+
+21
+UPDATE prendre_casque
+SET qte = 42, id_casque = (SELECT * FROM (SELECT id_casque FROM casque
+WHERE nom_casque = "Weisenau") c)
+WHERE id_bataille = (SELECT * FROM (SELECT id_bataille FROM bataille
+WHERE nom_bataille = "Attaque de la banque postale") c )
