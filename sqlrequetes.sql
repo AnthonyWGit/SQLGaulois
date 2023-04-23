@@ -91,4 +91,11 @@ SELECT personnage.nom_personnage, boire.dose_boire  FROM personnage
 LEFT JOIN boire ON personnage.id_personnage = boire.id_personnage
 WHERE boire.id_personnage IS NULL
 
+15
+SELECT personnage.nom_personnage FROM personnage 
+INNER JOIN autoriser_boire ON personnage.id_personnage = autoriser_boire.id_personnage
+WHERE autoriser_boire.id_potion != 1
+
+__________________________________
+
 
