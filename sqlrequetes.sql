@@ -50,6 +50,21 @@ INNER JOIN personnage ON prendre_casque.id_personnage = personnage.id_personnage
 WHERE bataille.nom_bataille = "Bataille du village gaulois"
 GROUP BY personnage.id_personnage
 
+-- BELOW REQUESTCORRECTED BY TEACHER --
+SELECT p.nom_personnage, SUM(pc.qte) AS nb_casques
+FROM personnage p, bataille b, prendre_casque pc
+WHERE p.id_personnage = pc.id_personnage
+AND pc.id_bataille = b.id_bataille
+AND b.nom_bataille = 'Bataille du village gaulois'
+GROUP BY p.id_personnage
+HAVING nb_casques >= ALL(
+SELECT SUM(pc.qte)
+FROM prendre_casque pc, bataille b
+WHERE b.id_bataille = pc.id_bataille
+AND b.nom_bataille = 'Bataille du village gaulois'
+GROUP BY pc.id_personnage
+)
+
 9
 SELECT MAX(boire.dose_boire), personnage.nom_personnage FROM personnage
 INNER JOIN boire ON personnage.id_personnage = boire.id_personnage
