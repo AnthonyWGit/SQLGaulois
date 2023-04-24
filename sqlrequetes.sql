@@ -113,20 +113,34 @@ WHERE autoriser_boire.id_potion != 1
 
 __________________________________
 
-16
-INSERT INTO personnage (personnage.id_personnage, personnage.nom_personnage, personnage.adresse_personnage, personnage.id_lieu, personnage.id_specialite)
+16 - A
+INSERT INTO personnage ( personnage.nom_personnage, personnage.adresse_personnage, personnage.id_lieu, personnage.id_specialite)
 VALUES
-	(46, "Champdeblix", "Ferme Hantassion", 6, 12)
+	("Champdeblix", "Ferme Hantassion", 6, 12)
+-- Case when we don't know the ids and we have to search for them --
 
+INSERT INTO personnage (personnage.nom_personnage, personnage.adresse_personnage, personnage.id_lieu, personnage.id_specialite)
+VALUES
+	( "Champdeblix", 
+	"Ferme Hantassion",
+	(SELECT * FROM (SELECT MAX(lieu.id_lieu) FROM personnage
+	INNER JOIN lieu ON personnage.id_lieu = lieu.id_lieu
+	INNER JOIN specialite ON personnage.id_specialite = specialite.id_specialite
+	WHERE specialite.nom_specialite = "Agriculteur")c ), 
+	(SELECT * FROM (SELECT MAX(specialite.id_specialite) FROM personnage
+	INNER JOIN lieu ON personnage.id_lieu = lieu.id_lieu
+	INNER JOIN specialite ON personnage.id_specialite = specialite.id_specialite
+	WHERE specialite.nom_specialite = "Agriculteur") d)
+	)
 
 ----------
-17
+17 - B
 INSERT INTO autoriser_boire (id_potion, id_personnage)
 VALUES
 	(1, 12)
 
 -----------
-18
+18 - C
 DELETE FROM casque
 WHERE id_casque = ANY ( SELECT * FROM (
 SELECT casque.id_casque  FROM casque LEFT JOIN prendre_casque ON casque.id_casque = prendre_casque.id_casque
@@ -134,7 +148,7 @@ INNER JOIN type_casque ON casque.id_type_casque = type_casque.id_type_casque
 WHERE type_casque.nom_type_casque = "Grec" AND prendre_casque.qte IS NULL) c )
 
 ------
-19
+19 - D
 UPDATE personnage
 SET id_lieu = (SELECT * FROM (SELECT id_lieu FROM lieu WHERE nom_lieu = "Condate") c ), adresse_personnage = "EN taule"
 WHERE id_personnage = (SELECT * FROM (SELECT id_personnage FROM personnage WHERE nom_personnage = "Zérozérosix") c )
@@ -152,14 +166,15 @@ WHERE composer.id_potion = (SELECT * FROM (
 SELECT potion.id_potion FROM composer INNER JOIN potion ON composer.id_potion = potion.id_potion
 INNER JOIN ingredient ON composer.id_ingredient = ingredient.id_ingredient
 WHERE ingredient.nom_ingredient = "Persil" AND potion.nom_potion = "Soupe") c )
-20
+
+20 - E
 DELETE FROM composer
 WHERE id_ingredient IN (SELECT * FROM (
 SELECT ingredient.id_ingredient  FROM composer INNER JOIN potion ON composer.id_potion = potion.id_potion
 INNER JOIN ingredient ON composer.id_ingredient = ingredient.id_ingredient
 WHERE ingredient.nom_ingredient = "Persil" AND potion.nom_potion = "Soupe" ) c ) 
 
-21
+21 - F
 UPDATE prendre_casque
 SET qte = 42, id_casque = (SELECT * FROM (SELECT id_casque FROM casque
 WHERE nom_casque = "Weisenau") c)
